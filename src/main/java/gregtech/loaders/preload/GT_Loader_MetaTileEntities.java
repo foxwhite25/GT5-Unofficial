@@ -3,6 +3,7 @@ package gregtech.loaders.preload;
 import static gregtech.api.enums.MetaTileEntityIDs.*;
 import static gregtech.api.enums.Mods.Forestry;
 
+import gregtech.common.tileentities.machines.multi.*;
 import net.minecraft.util.EnumChatFormatting;
 
 import gregtech.GT_Mod;
@@ -82,51 +83,6 @@ import gregtech.common.tileentities.machines.basic.GT_MetaTileEntity_SeismicPros
 import gregtech.common.tileentities.machines.basic.GT_MetaTileEntity_Teleporter;
 import gregtech.common.tileentities.machines.long_distance.GT_MetaTileEntity_LongDistancePipelineFluid;
 import gregtech.common.tileentities.machines.long_distance.GT_MetaTileEntity_LongDistancePipelineItem;
-import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_AssemblyLine;
-import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_BrickedBlastFurnace;
-import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_BronzeBlastFurnace;
-import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_Charcoal_Pit;
-import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_Cleanroom;
-import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_ConcreteBackfiller1;
-import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_ConcreteBackfiller2;
-import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_DieselEngine;
-import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_DistillationTower;
-import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_ElectricBlastFurnace;
-import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_ExtremeDieselEngine;
-import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_FusionComputer1;
-import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_FusionComputer2;
-import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_FusionComputer3;
-import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_HeatExchanger;
-import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_ImplosionCompressor;
-import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_IntegratedOreFactory;
-import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_LargeBoiler_Bronze;
-import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_LargeBoiler_Steel;
-import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_LargeBoiler_Titanium;
-import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_LargeBoiler_TungstenSteel;
-import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_LargeChemicalReactor;
-import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_LargeTurbine_Gas;
-import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_LargeTurbine_GasAdvanced;
-import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_LargeTurbine_HPSteam;
-import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_LargeTurbine_Plasma;
-import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_LargeTurbine_Steam;
-import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_MultiFurnace;
-import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_NanoForge;
-import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_OilCracker;
-import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_OilDrill1;
-import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_OilDrill2;
-import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_OilDrill3;
-import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_OilDrill4;
-import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_OilDrillInfinite;
-import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_OreDrillingPlant1;
-import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_OreDrillingPlant2;
-import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_OreDrillingPlant3;
-import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_OreDrillingPlant4;
-import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_PCBFactory;
-import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_PlasmaForge;
-import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_ProcessingArray;
-import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_PyrolyseOven;
-import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_TranscendentPlasmaMixer;
-import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_VacuumFreezer;
 import gregtech.common.tileentities.machines.steam.GT_MetaTileEntity_AlloySmelter_Bronze;
 import gregtech.common.tileentities.machines.steam.GT_MetaTileEntity_AlloySmelter_Steel;
 import gregtech.common.tileentities.machines.steam.GT_MetaTileEntity_Compressor_Bronze;
@@ -586,6 +542,11 @@ public class GT_Loader_MetaTileEntities implements Runnable { // TODO CHECK CIRC
         ItemList.NanoForge.set(
             new GT_MetaTileEntity_NanoForge(NANO_FORGE_CONTROLLER.ID, "multimachine.nanoforge", "Nano Forge")
                 .getStackForm(1));
+        ItemList.CircuitAssemblyMulti.set(
+            new GT_MetaTileEntity_CircuitAssemblyMulti(CIRCUIT_ASSEMBLER_MULTI.ID, "multimachine.circuitassemblymulti", "Circuit Assembly Multi")
+                .getStackForm(1));
+
+
 
     }
 
