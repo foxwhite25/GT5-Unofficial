@@ -3067,7 +3067,7 @@ public class GT_Recipe implements Comparable<GT_Recipe> {
                     }
                     return result;
                 });
-        public static final GT_Recipe_Map sCircuitAssemblerMulti = new GT_Recipe_Map(
+        public static final GT_Recipe_Map sCircuitAssemblerMulti = new GT_Recipe_Map.TranscendentPlasmaMixerRecipeMap.CircuitAssemblerRecipeMap(
             new HashSet<>(8200),
             "gt.recipe.circuitassemblermulti",
             null,
