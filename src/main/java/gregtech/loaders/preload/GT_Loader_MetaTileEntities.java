@@ -86,6 +86,7 @@ import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_AssemblyLin
 import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_BrickedBlastFurnace;
 import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_BronzeBlastFurnace;
 import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_Charcoal_Pit;
+import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_CircuitAssemblyMulti;
 import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_Cleanroom;
 import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_ConcreteBackfiller1;
 import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_ConcreteBackfiller2;
@@ -127,7 +128,6 @@ import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_ProcessingA
 import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_PyrolyseOven;
 import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_TranscendentPlasmaMixer;
 import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_VacuumFreezer;
-import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_CircuitAssemblyMulti;
 import gregtech.common.tileentities.machines.steam.GT_MetaTileEntity_AlloySmelter_Bronze;
 import gregtech.common.tileentities.machines.steam.GT_MetaTileEntity_AlloySmelter_Steel;
 import gregtech.common.tileentities.machines.steam.GT_MetaTileEntity_Compressor_Bronze;
@@ -588,10 +588,10 @@ public class GT_Loader_MetaTileEntities implements Runnable { // TODO CHECK CIRC
             new GT_MetaTileEntity_NanoForge(NANO_FORGE_CONTROLLER.ID, "multimachine.nanoforge", "Nano Forge")
                 .getStackForm(1));
         ItemList.CircuitAssemblyMulti.set(
-            new GT_MetaTileEntity_CircuitAssemblyMulti(CIRCUIT_ASSEMBLER_MULTI.ID, "multimachine.circuitassemblymulti", "Circuit Assembly Multi")
-                .getStackForm(1));
-
-
+            new GT_MetaTileEntity_CircuitAssemblyMulti(
+                CIRCUIT_ASSEMBLER_MULTI.ID,
+                "multimachine.circuitassemblymulti",
+                "Circuit Assembly Multi").getStackForm(1));
 
     }
 
