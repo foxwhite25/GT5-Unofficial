@@ -4,6 +4,7 @@ import static gregtech.api.enums.Mods.NotEnoughItems;
 
 import gregtech.api.enums.Materials;
 import gregtech.loaders.postload.chains.GT_BauxiteRefineChain;
+import gregtech.loaders.postload.chains.GT_CircuitAssemblerMultiRecipes;
 import gregtech.loaders.postload.chains.GT_NaniteChain;
 import gregtech.loaders.postload.chains.GT_PCBFactoryRecipes;
 import gregtech.loaders.postload.recipes.AlloySmelterRecipes;
@@ -127,5 +128,6 @@ public class GT_MachineRecipeLoader implements Runnable {
         GT_BauxiteRefineChain.run();
         GT_NaniteChain.run();
         GT_PCBFactoryRecipes.load();
+        GT_CircuitAssemblerMultiRecipes.run();
     }
 }
