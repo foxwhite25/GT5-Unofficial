@@ -2105,43 +2105,6 @@ public class GT_Recipe implements Comparable<GT_Recipe> {
                 setNEIBackgroundSize(172, 118);
             }
 
-            public static class CircuitAssemblerRecipeMap extends GT_Recipe_Map {
-
-                public CircuitAssemblerRecipeMap(Collection<GT_Recipe> aRecipeList, String aUnlocalizedName,
-                    String aLocalName, String aNEIName, String aNEIGUIPath, int aUsualInputCount, int aUsualOutputCount,
-                    int aMinimalInputItems, int aMinimalInputFluids, int aAmperage, String aNEISpecialValuePre,
-                    int aNEISpecialValueMultiplier, String aNEISpecialValuePost, boolean aShowVoltageAmperageInNEI,
-                    boolean aNEIAllowed) {
-                    super(
-                        aRecipeList,
-                        aUnlocalizedName,
-                        aLocalName,
-                        aNEIName,
-                        aNEIGUIPath,
-                        aUsualInputCount,
-                        aUsualOutputCount,
-                        aMinimalInputItems,
-                        aMinimalInputFluids,
-                        aAmperage,
-                        aNEISpecialValuePre,
-                        aNEISpecialValueMultiplier,
-                        aNEISpecialValuePost,
-                        aShowVoltageAmperageInNEI,
-                        aNEIAllowed);
-                    useModularUI(true);
-                    setUsualFluidInputCount(2);
-                    setProgressBarPos(86, 44);
-                    setNEITransferRect(
-                        new Rectangle(
-                            progressBarPos.x - (16 / 2),
-                            progressBarPos.y,
-                            progressBarSize.width + 16,
-                            progressBarSize.height));
-                    setLogoPos(87, 99);
-                    setNEIBackgroundSize(172, 118);
-                }
-            }
-
             @Override
             public List<Pos2d> getItemInputPositions(int itemInputCount) {
                 return UIHelper.getGridPositions(itemInputCount, 60, 8, 1);
@@ -2173,6 +2136,75 @@ public class GT_Recipe implements Comparable<GT_Recipe> {
                     "Average: " + formatNumbers(averageUsage)
                         + " EU/t"
                         + GT_Utility.getTierNameWithParentheses(averageUsage));
+            }
+        }
+        public static class CircuitAssemblerMultiRecipeMap extends GT_Recipe_Map {
+
+            public CircuitAssemblerMultiRecipeMap(Collection<GT_Recipe> aRecipeList, String aUnlocalizedName,
+                                                  String aLocalName, String aNEIName, String aNEIGUIPath, int aUsualInputCount, int aUsualOutputCount,
+                                                  int aMinimalInputItems, int aMinimalInputFluids, int aAmperage, String aNEISpecialValuePre,
+                                                  int aNEISpecialValueMultiplier, String aNEISpecialValuePost, boolean aShowVoltageAmperageInNEI,
+                                                  boolean aNEIAllowed) {
+                super(
+                    aRecipeList,
+                    aUnlocalizedName,
+                    aLocalName,
+                    aNEIName,
+                    aNEIGUIPath,
+                    aUsualInputCount,
+                    aUsualOutputCount,
+                    aMinimalInputItems,
+                    aMinimalInputFluids,
+                    aAmperage,
+                    aNEISpecialValuePre,
+                    aNEISpecialValueMultiplier,
+                    aNEISpecialValuePost,
+                    aShowVoltageAmperageInNEI,
+                    aNEIAllowed);
+                setNEITransferRect(new Rectangle(146, 26, 10, 18));
+            }
+
+            @Override
+            public List<Pos2d> getItemInputPositions(int itemInputCount) {
+                return UIHelper.getGridPositions(itemInputCount, 16, 8, 4);
+            }
+
+            @Override
+            public List<Pos2d> getItemOutputPositions(int itemOutputCount) {
+                return Collections.singletonList(new Pos2d(142, 8));
+            }
+
+            @Override
+            public Pos2d getSpecialItemPosition() {
+                return new Pos2d(142, 44);
+            }
+
+            @Override
+            public List<Pos2d> getFluidInputPositions(int fluidInputCount) {
+                return UIHelper.getGridPositions(fluidInputCount, 106, 8, 1);
+            }
+
+            @Override
+            public void addProgressBarUI(ModularWindow.Builder builder, Supplier<Float> progressSupplier,
+                                         Pos2d windowOffset) {
+                int bar1Width = 17;
+                int bar2Width = 18;
+                builder.widget(
+                    new ProgressBar().setTexture(GT_UITextures.PROGRESSBAR_ASSEMBLY_LINE_1, 17)
+                        .setDirection(ProgressBar.Direction.RIGHT)
+                        .setProgress(() -> progressSupplier.get() * ((float) (bar1Width + bar2Width) / bar1Width))
+                        .setSynced(false, false)
+                        .setPos(new Pos2d(88, 8).add(windowOffset))
+                        .setSize(bar1Width, 72));
+                builder.widget(
+                    new ProgressBar().setTexture(GT_UITextures.PROGRESSBAR_ASSEMBLY_LINE_2, 18)
+                        .setDirection(ProgressBar.Direction.RIGHT)
+                        .setProgress(
+                            () -> (progressSupplier.get() - ((float) bar1Width / (bar1Width + bar2Width)))
+                                * ((float) (bar1Width + bar2Width) / bar2Width))
+                        .setSynced(false, false)
+                        .setPos(new Pos2d(124, 8).add(windowOffset))
+                        .setSize(bar2Width, 72));
             }
         }
 
@@ -3067,13 +3099,13 @@ public class GT_Recipe implements Comparable<GT_Recipe> {
                     }
                     return result;
                 });
-        public static final GT_Recipe_Map sCircuitAssemblerMulti = new GT_Recipe_Map.TranscendentPlasmaMixerRecipeMap.CircuitAssemblerRecipeMap(
+        public static final GT_Recipe_Map sCircuitAssemblerMulti = new CircuitAssemblerMultiRecipeMap(
             new HashSet<>(8200),
             "gt.recipe.circuitassemblermulti",
+            "Circuit Assembler Multi",
             null,
-            null,
-            GregTech.getResourcePath(TEXTURES_GUI_BASICMACHINES, "Assembler2"),
-            9,
+            GregTech.getResourcePath(TEXTURES_GUI_BASICMACHINES, "LCRNEI"),
+            16,
             1,
             1,
             0,
@@ -3082,10 +3114,9 @@ public class GT_Recipe implements Comparable<GT_Recipe> {
             1,
             E,
             true,
-            true).setSlotOverlay(false, false, GT_UITextures.OVERLAY_SLOT_CIRCUIT)
-                .setRecipeConfigFile("assembling", FIRST_ITEM_OUTPUT)
-                .setProgressBar(GT_UITextures.PROGRESSBAR_ASSEMBLE, ProgressBar.Direction.RIGHT)
-                .setDisableOptimize(true);
+            true).setSlotOverlay(false, false, true, true, GT_UITextures.OVERLAY_SLOT_CIRCUIT)
+            .setUsualFluidInputCount(4)
+            .setDisableOptimize(true);
 
         public static final GT_Recipe_Map_IC2NuclearFake sIC2NuclearFakeRecipe = (GT_Recipe_Map_IC2NuclearFake) new GT_Recipe_Map_IC2NuclearFake()
             .setDisableOptimize(true);
