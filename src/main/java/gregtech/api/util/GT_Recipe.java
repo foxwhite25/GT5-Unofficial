@@ -3106,18 +3106,16 @@ public class GT_Recipe implements Comparable<GT_Recipe> {
             "Circuit Assembler Multi",
             null,
             GregTech.getResourcePath(TEXTURES_GUI_BASICMACHINES, "LCRNEI"),
-            16,
-            1,
             1,
             0,
+            0,
+            0,
             1,
-            E,
-            1,
-            E,
-            true,
-            true).setSlotOverlay(false, false, true, true, GT_UITextures.OVERLAY_SLOT_CIRCUIT)
-            .setUsualFluidInputCount(4)
-            .setDisableOptimize(true);
+            "",
+            0,
+            "",
+            false,
+            true).setDisableOptimize(true);
 
         public static final GT_Recipe_Map_IC2NuclearFake sIC2NuclearFakeRecipe = (GT_Recipe_Map_IC2NuclearFake) new GT_Recipe_Map_IC2NuclearFake()
             .setDisableOptimize(true);

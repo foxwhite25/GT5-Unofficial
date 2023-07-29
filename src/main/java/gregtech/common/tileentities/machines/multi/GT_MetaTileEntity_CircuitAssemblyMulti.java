@@ -7,12 +7,16 @@ import static gregtech.api.enums.Textures.BlockIcons.*;
 import static gregtech.api.enums.Textures.BlockIcons.casingTexturePages;
 import static gregtech.api.util.GT_StructureUtility.buildHatchAdder;
 import static gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_PlasmaForge.*;
+import static java.lang.Math.max;
 import static net.minecraft.util.EnumChatFormatting.GOLD;
 import static net.minecraft.util.EnumChatFormatting.GRAY;
 
 import javax.annotation.Nonnull;
 
+import gregtech.api.util.GT_Recipe.GT_Recipe_Map;
+import gregtech.common.items.GT_IntegratedCircuit_Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +31,6 @@ import gregtech.api.interfaces.IGlobalWirelessEnergy;
 import gregtech.api.interfaces.ITexture;
 import gregtech.api.interfaces.metatileentity.IMetaTileEntity;
 import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
-import gregtech.api.interfaces.tileentity.IVoidable;
 import gregtech.api.logic.ProcessingLogic;
 import gregtech.api.metatileentity.implementations.GT_MetaTileEntity_EnhancedMultiBlockBase;
 import gregtech.api.recipe.check.CheckRecipeResult;
@@ -40,7 +43,6 @@ public class GT_MetaTileEntity_CircuitAssemblyMulti
     implements ISurvivalConstructable, IGlobalWirelessEnergy {
 
     private static final String STRUCTURE_PIECE_MAIN = "main";
-    protected IVoidable machine;
     protected int mCraftingTier = 0;
     private static final IStructureDefinition<GT_MetaTileEntity_CircuitAssemblyMulti> STRUCTURE_DEFINITION = StructureDefinition
         .<GT_MetaTileEntity_CircuitAssemblyMulti>builder()
@@ -50,7 +52,7 @@ public class GT_MetaTileEntity_CircuitAssemblyMulti
         .addElement(
             'h',
             buildHatchAdder(GT_MetaTileEntity_CircuitAssemblyMulti.class)
-                .atLeast(InputHatch, OutputBus, InputBus, Maintenance)
+                .atLeast(InputHatch, OutputHatch, OutputBus, InputBus, Maintenance, Energy.or(ExoticEnergy))
                 .casingIndex(DIM_INJECTION_CASING)
                 .dot(1)
                 .buildAndChain(GregTech_API.sBlockCasings1, DIM_INJECTION_CASING))
@@ -106,10 +108,12 @@ public class GT_MetaTileEntity_CircuitAssemblyMulti
         return tt;
     }
 
+
     @Override
     public GT_Recipe.GT_Recipe_Map getRecipeMap() {
-        return GT_Recipe.GT_Recipe_Map.sCircuitAssemblerMulti;
+        return GT_Recipe_Map.sCircuitAssemblerMulti;
     }
+
 
     private String ownerUUID;
     int multiplier = 1;
@@ -120,23 +124,8 @@ public class GT_MetaTileEntity_CircuitAssemblyMulti
         return mWirelessEUt;
     }
 
-    @Override
     protected ProcessingLogic createProcessingLogic() {
         return new ProcessingLogic() {
-
-            @NotNull
-            @Override
-            protected GT_ParallelHelper createParallelHelper(@NotNull GT_Recipe recipe) {
-                return new GT_ParallelHelper().setRecipe(recipe)
-                    .setItemInputs(inputItems)
-                    .setFluidInputs(inputFluids)
-                    .setAvailableEUt(availableVoltage * availableAmperage)
-                    .setMachine(machine, protectItems, protectFluids)
-                    .setRecipeLocked(recipeLockableMachine, isRecipeLocked)
-                    .setMaxParallel(getCraftingTier() * 6)
-                    .enableBatchMode(batchSize)
-                    .enableOutputCalculation();
-            }
 
             @NotNull
             @Override
@@ -145,29 +134,13 @@ public class GT_MetaTileEntity_CircuitAssemblyMulti
                 if (!addEUToGlobalEnergyMap(ownerUUID, -mWirelessEUt * recipe.mDuration)) {
                     return CheckRecipeResultRegistry.insufficientPower(mWirelessEUt * recipe.mDuration);
                 }
-                if (recipe.mSpecialValue > getCraftingTier()) {
-                    return CheckRecipeResultRegistry.insufficientMachineTier(recipe.mSpecialValue);
-                }
                 return CheckRecipeResultRegistry.SUCCESSFUL;
-            }
-
-            @Override
-            protected double calculateDuration(@Nonnull GT_Recipe recipe, @Nonnull GT_ParallelHelper helper,
-                @Nonnull GT_OverclockCalculator calculator) {
-                return calculator.getDuration();
             }
 
             @Nonnull
             @Override
-            protected GT_OverclockCalculator createOverclockCalculator(@Nonnull GT_Recipe recipe,
-                @Nonnull GT_ParallelHelper helper) {
-                return new GT_OverclockCalculator().setRecipeEUt(recipe.mEUt)
-                    .setParallel((int) Math.floor(helper.getCurrentParallel() / helper.getDurationMultiplierDouble()))
-                    .setDuration((int) Math.ceil(recipe.mDuration * helper.getDurationMultiplierDouble()))
-                    .setAmperage(availableAmperage)
-                    .setEUt(availableVoltage)
-                    .setDurationDecreasePerOC(overClockTimeReduction)
-                    .setEUtIncreasePerOC(overClockPowerIncrease);
+            protected GT_OverclockCalculator createOverclockCalculator(@Nonnull GT_Recipe recipe) {
+                return GT_OverclockCalculator.ofNoOverclock(recipe);
             }
 
             @NotNull
@@ -178,7 +151,14 @@ public class GT_MetaTileEntity_CircuitAssemblyMulti
                 setCalculatedEut(0);
                 return result;
             }
-        };
+
+        }.setMaxParallelSupplier(() -> {
+            ItemStack controllerStack = getControllerSlot();
+            if (controllerStack != null && controllerStack.getItem() instanceof GT_IntegratedCircuit_Item) {
+                multiplier = controllerStack.stackSize * max(1, controllerStack.getItemDamage());
+            }
+            return multiplier;
+        });
     }
 
     @Override
@@ -186,7 +166,9 @@ public class GT_MetaTileEntity_CircuitAssemblyMulti
         // The voltage is only used for recipe finding
         logic.setAvailableVoltage(Long.MAX_VALUE);
         logic.setAvailableAmperage(1);
+        logic.setAmperageOC(false);
     }
+
 
     private void setCraftingTier(int tier) {
         mCraftingTier = tier;
@@ -210,6 +192,17 @@ public class GT_MetaTileEntity_CircuitAssemblyMulti
             // Adds player to the wireless network if they do not already exist on it.
             ownerUUID = processInitialSettings(aBaseMetaTileEntity);
         }
+    }
+    @Override
+    public void saveNBTData(NBTTagCompound aNBT) {
+        aNBT.setInteger("eMultiplier", multiplier);
+        super.saveNBTData(aNBT);
+    }
+
+    @Override
+    public void loadNBTData(final NBTTagCompound aNBT) {
+        multiplier = aNBT.getInteger("eMultiplier");
+        super.loadNBTData(aNBT);
     }
 
     public boolean checkMachine(IGregTechTileEntity aBaseMetaTileEntity, ItemStack aStack) {
@@ -254,4 +247,9 @@ public class GT_MetaTileEntity_CircuitAssemblyMulti
 
         return new ITexture[] { casingTexturePages[0][DIM_TRANS_CASING] };
     }
+    @Override
+    public boolean supportsVoidProtection() {
+        return true;
+    }
 }
+

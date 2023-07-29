@@ -1,6 +1,7 @@
 package gregtech.loaders.postload.chains;
 
 import static gregtech.api.util.GT_Recipe.GT_Recipe_Map.sCircuitAssemblerMulti;
+import static gregtech.api.util.GT_Recipe.GT_Recipe_Map.sTranscendentPlasmaMixerRecipes;
 import static gregtech.api.util.GT_RecipeBuilder.SECONDS;
 
 import gregtech.api.enums.*;
@@ -21,6 +22,19 @@ public class GT_CircuitAssemblerMultiRecipes {
             .noFluidOutputs()
             .duration(10 * SECONDS)
             .eut(TierEU.RECIPE_IV)
+            .addTo(sCircuitAssemblerMulti);
+        GT_Values.RA.stdBuilder()
+            .itemInputs(GT_Utility.getIntegratedCircuit(1))
+            .noItemOutputs()
+            .fluidInputs(
+                Materials.Helium.getPlasma(1000),
+                Materials.Iron.getPlasma(1000),
+                Materials.Calcium.getPlasma(1000),
+                Materials.Niobium.getPlasma(1000))
+            .fluidOutputs(MaterialsUEVplus.ExcitedDTCC.getFluid(1000L))
+            .duration(100)
+            .eut(TierEU.RECIPE_UIV)
+            .noOptimize()
             .addTo(sCircuitAssemblerMulti);
     }
 }
