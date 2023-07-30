@@ -68,12 +68,12 @@ public class GT_MetaTileEntity_CircuitAssemblyMulti
 
     @Override
     public boolean isCorrectMachinePart(ItemStack aStack) {
-        return false;
+        return true;
     }
 
     @Override
     public int getMaxEfficiency(ItemStack aStack) {
-        return 0;
+        return 10000;
     }
 
     @Override
