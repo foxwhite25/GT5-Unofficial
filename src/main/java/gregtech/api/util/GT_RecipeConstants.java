@@ -1,14 +1,13 @@
 package gregtech.api.util;
 
+import static gregtech.api.enums.GT_Values.E;
+import static gregtech.api.enums.Mods.GregTech;
+import static gregtech.api.util.GT_Recipe.GT_Recipe_Map.TEXTURES_GUI_BASICMACHINES;
 import static gregtech.api.util.GT_RecipeMapUtil.convertCellToFluid;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Optional;
+import java.util.*;
 
+import gregtech.api.gui.modularui.GT_UITextures;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
@@ -305,4 +304,71 @@ public class GT_RecipeConstants {
         GT_RecipeMapUtil.SPECIAL_VALUE_ALIASES.add(FUSION_THRESHOLD);
         GT_RecipeMapUtil.SPECIAL_VALUE_ALIASES.add(FUEL_VALUE);
     }
+    public static final IGT_RecipeMap CircuitAssemblerMulti = IGT_RecipeMap.newRecipeMap(builder -> {
+        Optional<GT_Recipe.GT_Recipe_WithAlt> rr = builder.forceOreDictInput()
+            .validateInputCount(4, 16)
+            .validateOutputCount(1, 1)
+            .validateOutputFluidCount(-1, 0)
+            .validateInputFluidCount(0, 4)
+            .buildWithAlt();
+        if (!rr.isPresent()) return Collections.emptyList();
+        GT_Recipe.GT_Recipe_WithAlt r = rr.get();
+        ItemStack[][] mOreDictAlt = r.mOreDictAlt;
+        Object[] inputs = builder.getItemInputsOreDict();
+        ItemStack aResearchItem = builder.getMetadata(RESEARCH_ITEM);
+        ItemStack aOutput = r.mOutputs[0];
+        int tPersistentHash = 1;
+        for (int i = 0, mOreDictAltLength = mOreDictAlt.length; i < mOreDictAltLength; i++) {
+            ItemStack[] alts = mOreDictAlt[i];
+            Object input = inputs[i];
+            if (input instanceof ItemStack)
+                tPersistentHash = tPersistentHash * 31 + GT_Utility.persistentHash((ItemStack) input, true, false);
+            else if (input instanceof ItemStack[]) {
+                for (ItemStack alt : ((ItemStack[]) input)) {
+                    tPersistentHash = tPersistentHash * 31 + GT_Utility.persistentHash(alt, true, false);
+                }
+                tPersistentHash *= 31;
+            } else if (input instanceof Object[]objs) {
+                Arrays.sort(
+                    alts,
+                    Comparator
+                        .<ItemStack, String>comparing(s -> GameRegistry.findUniqueIdentifierFor(s.getItem()).modId)
+                        .thenComparing(s -> GameRegistry.findUniqueIdentifierFor(s.getItem()).name)
+                        .thenComparingInt(Items.feather::getDamage)
+                        .thenComparingInt(s -> s.stackSize));
+
+                tPersistentHash = tPersistentHash * 31 + (objs[0] == null ? "" : objs[0].toString()).hashCode();
+                tPersistentHash = tPersistentHash * 31 + ((Number) objs[1]).intValue();
+            }
+        }
+        tPersistentHash = tPersistentHash * 31 + GT_Utility.persistentHash(aResearchItem, true, false);
+        tPersistentHash = tPersistentHash * 31 + GT_Utility.persistentHash(aOutput, true, false);
+        for (FluidStack fluidInput : r.mFluidInputs) {
+            if (fluidInput == null) continue;
+            tPersistentHash = tPersistentHash * 31 + GT_Utility.persistentHash(fluidInput, true, false);
+        }
+        tPersistentHash = tPersistentHash * 31 + r.mDuration;
+        tPersistentHash = tPersistentHash * 31 + r.mEUt;
+        Collection<GT_Recipe> ret = new ArrayList<>(3);
+        ret.add(
+            new GT_Recipe_Map.CircuitAssemblerMultiRecipeMap(
+                new HashSet<>(8200),
+                "gt.recipe.circuitassemblermulti",
+                "Circuit Assembler Multi",
+                null,
+                GregTech.getResourcePath(TEXTURES_GUI_BASICMACHINES, "LCRNEI"),
+                16,
+                1,
+                1,
+                0,
+                1,
+                E,
+                1,
+                E,
+                true,
+                true).setSlotOverlay(false, false, true, true, GT_UITextures.OVERLAY_SLOT_CIRCUIT)
+                .setUsualFluidInputCount(4)
+                .setDisableOptimize(true));
+        return ret;
+    });
 }

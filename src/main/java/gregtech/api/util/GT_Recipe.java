@@ -2142,10 +2142,10 @@ public class GT_Recipe implements Comparable<GT_Recipe> {
         public static class CircuitAssemblerMultiRecipeMap extends GT_Recipe_Map {
 
             public CircuitAssemblerMultiRecipeMap(Collection<GT_Recipe> aRecipeList, String aUnlocalizedName,
-                                                  String aLocalName, String aNEIName, String aNEIGUIPath, int aUsualInputCount, int aUsualOutputCount,
-                                                  int aMinimalInputItems, int aMinimalInputFluids, int aAmperage, String aNEISpecialValuePre,
-                                                  int aNEISpecialValueMultiplier, String aNEISpecialValuePost, boolean aShowVoltageAmperageInNEI,
-                                                  boolean aNEIAllowed) {
+                String aLocalName, String aNEIName, String aNEIGUIPath, int aUsualInputCount, int aUsualOutputCount,
+                int aMinimalInputItems, int aMinimalInputFluids, int aAmperage, String aNEISpecialValuePre,
+                int aNEISpecialValueMultiplier, String aNEISpecialValuePost, boolean aShowVoltageAmperageInNEI,
+                boolean aNEIAllowed) {
                 super(
                     aRecipeList,
                     aUnlocalizedName,
@@ -2187,7 +2187,7 @@ public class GT_Recipe implements Comparable<GT_Recipe> {
 
             @Override
             public void addProgressBarUI(ModularWindow.Builder builder, Supplier<Float> progressSupplier,
-                                         Pos2d windowOffset) {
+                Pos2d windowOffset) {
                 int bar1Width = 17;
                 int bar2Width = 18;
                 builder.widget(
@@ -3106,16 +3106,18 @@ public class GT_Recipe implements Comparable<GT_Recipe> {
             "Circuit Assembler Multi",
             null,
             GregTech.getResourcePath(TEXTURES_GUI_BASICMACHINES, "LCRNEI"),
+            16,
+            1,
             1,
             0,
-            0,
-            0,
             1,
-            "",
-            0,
-            "",
-            false,
-            true).setDisableOptimize(true);
+            E,
+            1,
+            E,
+            true,
+            true).setSlotOverlay(false, false, true, true, GT_UITextures.OVERLAY_SLOT_CIRCUIT)
+            .setUsualFluidInputCount(4)
+            .setDisableOptimize(true);
 
         public static final GT_Recipe_Map_IC2NuclearFake sIC2NuclearFakeRecipe = (GT_Recipe_Map_IC2NuclearFake) new GT_Recipe_Map_IC2NuclearFake()
             .setDisableOptimize(true);
@@ -3394,7 +3396,7 @@ public class GT_Recipe implements Comparable<GT_Recipe> {
             setNEIUnificateOutput(aNEIUnificateOutput);
         }
 
-        public GT_Recipe_Map setDisableOptimize(boolean disableOptimize) {
+        public GT_Recipe setDisableOptimize(boolean disableOptimize) {
             this.disableOptimize = disableOptimize;
             return this;
         }

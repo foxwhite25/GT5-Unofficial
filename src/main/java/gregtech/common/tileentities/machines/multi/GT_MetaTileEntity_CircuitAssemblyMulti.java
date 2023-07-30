@@ -13,8 +13,6 @@ import static net.minecraft.util.EnumChatFormatting.GRAY;
 
 import javax.annotation.Nonnull;
 
-import gregtech.api.util.GT_Recipe.GT_Recipe_Map;
-import gregtech.common.items.GT_IntegratedCircuit_Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -37,13 +35,14 @@ import gregtech.api.recipe.check.CheckRecipeResult;
 import gregtech.api.recipe.check.CheckRecipeResultRegistry;
 import gregtech.api.render.TextureFactory;
 import gregtech.api.util.*;
+import gregtech.api.util.GT_Recipe.GT_Recipe_Map;
+import gregtech.common.items.GT_IntegratedCircuit_Item;
 
 public class GT_MetaTileEntity_CircuitAssemblyMulti
     extends GT_MetaTileEntity_EnhancedMultiBlockBase<GT_MetaTileEntity_CircuitAssemblyMulti>
     implements ISurvivalConstructable, IGlobalWirelessEnergy {
 
     private static final String STRUCTURE_PIECE_MAIN = "main";
-    protected int mCraftingTier = 0;
     private static final IStructureDefinition<GT_MetaTileEntity_CircuitAssemblyMulti> STRUCTURE_DEFINITION = StructureDefinition
         .<GT_MetaTileEntity_CircuitAssemblyMulti>builder()
         .addShape(
@@ -108,12 +107,10 @@ public class GT_MetaTileEntity_CircuitAssemblyMulti
         return tt;
     }
 
-
     @Override
     public GT_Recipe.GT_Recipe_Map getRecipeMap() {
         return GT_Recipe_Map.sCircuitAssemblerMulti;
     }
-
 
     private String ownerUUID;
     int multiplier = 1;
@@ -169,15 +166,6 @@ public class GT_MetaTileEntity_CircuitAssemblyMulti
         logic.setAmperageOC(false);
     }
 
-
-    private void setCraftingTier(int tier) {
-        mCraftingTier = tier;
-    }
-
-    private int getCraftingTier() {
-        return mCraftingTier;
-    }
-
     @Override
     public IMetaTileEntity newMetaEntity(IGregTechTileEntity aTileEntity) {
         return new GT_MetaTileEntity_CircuitAssemblyMulti(mName);
@@ -193,6 +181,7 @@ public class GT_MetaTileEntity_CircuitAssemblyMulti
             ownerUUID = processInitialSettings(aBaseMetaTileEntity);
         }
     }
+
     @Override
     public void saveNBTData(NBTTagCompound aNBT) {
         aNBT.setInteger("eMultiplier", multiplier);
@@ -247,9 +236,9 @@ public class GT_MetaTileEntity_CircuitAssemblyMulti
 
         return new ITexture[] { casingTexturePages[0][DIM_TRANS_CASING] };
     }
+
     @Override
     public boolean supportsVoidProtection() {
         return true;
     }
 }
-
