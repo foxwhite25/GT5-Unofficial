@@ -1,13 +1,9 @@
 package gregtech.api.util;
 
-import static gregtech.api.enums.GT_Values.E;
-import static gregtech.api.enums.Mods.GregTech;
-import static gregtech.api.util.GT_Recipe.GT_Recipe_Map.TEXTURES_GUI_BASICMACHINES;
 import static gregtech.api.util.GT_RecipeMapUtil.convertCellToFluid;
 
 import java.util.*;
 
-import gregtech.api.gui.modularui.GT_UITextures;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;

@@ -39,7 +39,6 @@ import java.util.function.Supplier;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.init.Blocks;
@@ -2131,6 +2130,7 @@ public class GT_Recipe implements Comparable<GT_Recipe> {
                         + GT_Utility.getTierNameWithParentheses(averageUsage));
             }
         }
+
         public static class CircuitAssemblerMultiRecipeMap extends GT_Recipe_Map {
 
             public CircuitAssemblerMultiRecipeMap(Collection<GT_Recipe> aRecipeList, String aUnlocalizedName,
@@ -3108,8 +3108,9 @@ public class GT_Recipe implements Comparable<GT_Recipe> {
             E,
             true,
             true).setSlotOverlay(false, false, true, true, GT_UITextures.OVERLAY_SLOT_CIRCUIT)
-            .setUsualFluidInputCount(4)
-            .setDisableOptimize(true);
+                .setUsualFluidInputCount(4)
+            .setRecipeConfigFile("circuitassembling", FIRST_ITEM_INPUT)
+                .setDisableOptimize(true);
 
         public static final GT_Recipe_Map_IC2NuclearFake sIC2NuclearFakeRecipe = (GT_Recipe_Map_IC2NuclearFake) new GT_Recipe_Map_IC2NuclearFake()
             .setDisableOptimize(true);
