@@ -30,16 +30,7 @@ import static net.minecraft.util.EnumChatFormatting.GRAY;
 import static net.minecraft.util.StatCollector.translateToLocal;
 
 import java.awt.Rectangle;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -48,6 +39,7 @@ import java.util.function.Supplier;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.init.Blocks;
@@ -3396,7 +3388,7 @@ public class GT_Recipe implements Comparable<GT_Recipe> {
             setNEIUnificateOutput(aNEIUnificateOutput);
         }
 
-        public GT_Recipe setDisableOptimize(boolean disableOptimize) {
+        public GT_Recipe_Map setDisableOptimize(boolean disableOptimize) {
             this.disableOptimize = disableOptimize;
             return this;
         }
