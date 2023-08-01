@@ -2,6 +2,7 @@ package gregtech.loaders.postload.chains;
 
 import static gregtech.api.util.GT_Recipe.GT_Recipe_Map.sCircuitAssemblerMulti;
 import static gregtech.api.util.GT_RecipeBuilder.SECONDS;
+import static gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_CircuitAssemblyMulti.CraftingTier;
 
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -41,6 +42,7 @@ public class GT_CircuitAssemblerMultiRecipes {
                 new FluidStack(FluidRegistry.getFluid("ic2coolant"), 10000),
                 Materials.Radon.getGas(2500L))
             .itemOutputs(ItemList.Circuit_Wetwaremainframe.get(1))
+            .specialValue(CraftingTier = 8)
             .noFluidOutputs()
             .duration(20 * SECONDS)
             .eut(WETWARE_EU_T)

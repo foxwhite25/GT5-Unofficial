@@ -41,7 +41,9 @@ import gregtech.common.items.GT_IntegratedCircuit_Item;
 public class GT_MetaTileEntity_CircuitAssemblyMulti
     extends GT_MetaTileEntity_EnhancedMultiBlockBase<GT_MetaTileEntity_CircuitAssemblyMulti>
     implements ISurvivalConstructable, IGlobalWirelessEnergy {
-
+    public static int CraftingTier = 0;
+    protected static int OcPower = 0;
+    protected static int Octimedecrease = 0;
     private static final String STRUCTURE_PIECE_MAIN = "main";
     private static final IStructureDefinition<GT_MetaTileEntity_CircuitAssemblyMulti> STRUCTURE_DEFINITION = StructureDefinition
         .<GT_MetaTileEntity_CircuitAssemblyMulti>builder()
@@ -127,7 +129,7 @@ public class GT_MetaTileEntity_CircuitAssemblyMulti
             @NotNull
             @Override
             protected CheckRecipeResult validateRecipe(@Nonnull GT_Recipe recipe) {
-                mWirelessEUt = 10L * (long) recipe.mEUt * (long) multiplier;
+                mWirelessEUt = (long) recipe.mEUt * (long) multiplier;
                 if (!addEUToGlobalEnergyMap(ownerUUID, -mWirelessEUt * recipe.mDuration)) {
                     return CheckRecipeResultRegistry.insufficientPower(mWirelessEUt * recipe.mDuration);
                 }
@@ -136,9 +138,16 @@ public class GT_MetaTileEntity_CircuitAssemblyMulti
 
             @Nonnull
             @Override
-            protected GT_OverclockCalculator createOverclockCalculator(@Nonnull GT_Recipe recipe) {
-                return GT_OverclockCalculator.ofNoOverclock(recipe);
-            }
+            protected GT_OverclockCalculator createOverclockCalculator(@Nonnull GT_Recipe recipe,
+                @Nonnull GT_ParallelHelper helper) {
+                    return new GT_OverclockCalculator().setRecipeEUt(recipe.mEUt)
+                        .setParallel(1)
+                        .setDuration((int) Math.ceil(recipe.mDuration * helper.getDurationMultiplierDouble()))
+                        .setAmperage(availableAmperage)
+                        .setEUt(availableVoltage)
+                        .setDurationDecreasePerOC(overClockTimeReduction)
+                        .setEUtIncreasePerOC(overClockPowerIncrease);
+                }
 
             @NotNull
             @Override
@@ -146,6 +155,11 @@ public class GT_MetaTileEntity_CircuitAssemblyMulti
                 CheckRecipeResult result = super.process();
                 // Power will be directly consumed through wireless
                 setCalculatedEut(0);
+                this.lastRecipe = getRecipeMap()
+                    .findRecipe(getBaseMetaTileEntity(), this.lastRecipe, false, mEUt, inputFluids, inputItems);
+                if (this.lastRecipe == null) return result;
+                if (this.lastRecipe.mSpecialValue > CraftingTier + 1) return result;
+                if (!this.lastRecipe.isRecipeInputEqual(true, inputFluids, inputItems)) return result;
                 return result;
             }
 
@@ -195,6 +209,7 @@ public class GT_MetaTileEntity_CircuitAssemblyMulti
     }
 
     public boolean checkMachine(IGregTechTileEntity aBaseMetaTileEntity, ItemStack aStack) {
+        CraftingTier=-1;
 
         // Check the main structure
         if (!checkPiece(STRUCTURE_PIECE_MAIN, 1, 1, 0)) {
