@@ -6,8 +6,10 @@ import static gregtech.api.enums.GT_Values.AuthorTheEpicGamer274;
 import static gregtech.api.enums.Textures.BlockIcons.*;
 import static gregtech.api.enums.Textures.BlockIcons.casingTexturePages;
 import static gregtech.api.util.GT_StructureUtility.buildHatchAdder;
+import static gregtech.api.util.GT_Utility.clamp;
 import static gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_PlasmaForge.*;
 import static java.lang.Math.max;
+import static java.lang.Math.pow;
 import static net.minecraft.util.EnumChatFormatting.GOLD;
 import static net.minecraft.util.EnumChatFormatting.GRAY;
 
@@ -41,6 +43,7 @@ import gregtech.common.items.GT_IntegratedCircuit_Item;
 public class GT_MetaTileEntity_CircuitAssemblyMulti
     extends GT_MetaTileEntity_EnhancedMultiBlockBase<GT_MetaTileEntity_CircuitAssemblyMulti>
     implements ISurvivalConstructable, IGlobalWirelessEnergy {
+
     public static int CraftingTier = 0;
     protected static int OcPower = 0;
     protected static int Octimedecrease = 0;
@@ -117,6 +120,8 @@ public class GT_MetaTileEntity_CircuitAssemblyMulti
     private String ownerUUID;
     int multiplier = 1;
     long mWirelessEUt = 0;
+    long wirelessEUtWithoutParallel = 0;
+    private int currentCircuitNumber = 0;
 
     @Override
     protected long getActualEnergyUsage() {
@@ -129,7 +134,8 @@ public class GT_MetaTileEntity_CircuitAssemblyMulti
             @NotNull
             @Override
             protected CheckRecipeResult validateRecipe(@Nonnull GT_Recipe recipe) {
-                mWirelessEUt = (long) recipe.mEUt * (long) multiplier;
+                wirelessEUtWithoutParallel = (long) (recipe.mEUt * pow(2, currentCircuitNumber));
+                mWirelessEUt = wirelessEUtWithoutParallel * multiplier;
                 if (!addEUToGlobalEnergyMap(ownerUUID, -mWirelessEUt * recipe.mDuration)) {
                     return CheckRecipeResultRegistry.insufficientPower(mWirelessEUt * recipe.mDuration);
                 }
@@ -138,20 +144,27 @@ public class GT_MetaTileEntity_CircuitAssemblyMulti
 
             @Nonnull
             @Override
-            protected GT_OverclockCalculator createOverclockCalculator(@Nonnull GT_Recipe recipe,
-                @Nonnull GT_ParallelHelper helper) {
-                    return new GT_OverclockCalculator().setRecipeEUt(recipe.mEUt)
-                        .setParallel(1)
-                        .setDuration((int) Math.ceil(recipe.mDuration * helper.getDurationMultiplierDouble()))
-                        .setAmperage(availableAmperage)
-                        .setEUt(availableVoltage)
-                        .setDurationDecreasePerOC(overClockTimeReduction)
-                        .setEUtIncreasePerOC(overClockPowerIncrease);
-                }
+            protected GT_OverclockCalculator createOverclockCalculator(@Nonnull GT_Recipe recipe) {
+                return new GT_OverclockCalculator().setRecipeEUt(recipe.mEUt)
+                    .setParallel(multiplier)
+                    .setDuration((int) (recipe.mDuration / pow(2, currentCircuitNumber)))
+                    .setAmperage(1)
+                    .setEUt(wirelessEUtWithoutParallel)
+                    .setDurationDecreasePerOC(0)
+                    .setEUtIncreasePerOC(0);
+            }
 
             @NotNull
             @Override
             public CheckRecipeResult process() {
+                // Get circuit damage, clamp it and then use it later for overclocking.
+                ItemStack circuit = mInputBusses.get(0)
+                    .getStackInSlot(0);
+                if (circuit != null) {
+                    currentCircuitNumber = clamp(circuit.getItemDamage(), 0, 24);
+                } else {
+                    currentCircuitNumber = 0;
+                }
                 CheckRecipeResult result = super.process();
                 // Power will be directly consumed through wireless
                 setCalculatedEut(0);
@@ -209,7 +222,7 @@ public class GT_MetaTileEntity_CircuitAssemblyMulti
     }
 
     public boolean checkMachine(IGregTechTileEntity aBaseMetaTileEntity, ItemStack aStack) {
-        CraftingTier=-1;
+        CraftingTier = -1;
 
         // Check the main structure
         if (!checkPiece(STRUCTURE_PIECE_MAIN, 1, 1, 0)) {
