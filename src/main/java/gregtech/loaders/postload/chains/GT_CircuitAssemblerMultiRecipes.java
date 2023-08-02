@@ -51,8 +51,8 @@ public class GT_CircuitAssemblerMultiRecipes {
             .itemInputs(
                 GT_OreDictUnificator.get(OrePrefixes.frameGt, Materials.Tritanium, 2),
                 ItemList.Circuit_Wetwaresupercomputer.get(2L),
-                ItemList.Circuit_Parts_InductorXSMD.get(4L) ,
-                ItemList.Circuit_Parts_CapacitorXSMD.get(4L) ,
+                ItemList.Circuit_Parts_InductorXSMD.get(4L),
+                ItemList.Circuit_Parts_CapacitorXSMD.get(4L),
                 ItemList.Circuit_Parts_ResistorXSMD.get(4L),
                 ItemList.Circuit_Parts_TransistorXSMD.get(4L),
                 ItemList.Circuit_Parts_DiodeXSMD.get(4L),

@@ -3109,7 +3109,7 @@ public class GT_Recipe implements Comparable<GT_Recipe> {
             true,
             true).setSlotOverlay(false, false, true, true, GT_UITextures.OVERLAY_SLOT_CIRCUIT)
                 .setUsualFluidInputCount(4)
-            .setRecipeConfigFile("circuitassembling", FIRST_ITEM_INPUT)
+                .setRecipeConfigFile("circuitassembling", FIRST_ITEM_INPUT)
                 .setDisableOptimize(true);
 
         public static final GT_Recipe_Map_IC2NuclearFake sIC2NuclearFakeRecipe = (GT_Recipe_Map_IC2NuclearFake) new GT_Recipe_Map_IC2NuclearFake()
